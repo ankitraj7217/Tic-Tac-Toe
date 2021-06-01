@@ -1,39 +1,54 @@
+const clientID = Date.now();
+const ws = new WebSocket(`ws://localhost:8000/ws/${clientID}`);
+
 const board = document.getElementsByClassName("container-grid")[0];
 
-board.addEventListener("click", onClickOnBoard);
+board.addEventListener("click", sendBoxId);
 
 let arr = ["", "", "", "", "", "", "", "", ""];
 let turn = true;
 
-function onClickOnBoard(event) {
+function sendBoxId(event) {
   if (!event.target.hasChildNodes()) {
-    const elem = document.createElement("span");
-    if (turn) {
-      elem.innerText = "X";
-      elem.style.color = "blue";
-    } else {
-      elem.innerText = "O";
-      elem.style.color = "red";
-    }
-    arr[event.target.id[event.target.id.length - 1]] = elem.innerText;
-    event.target.appendChild(elem);
-    turn = !turn;
-
-    // this is done so that it runs after child element is appended
-    setTimeout(() => {
-      const winningPlayer = hasWon();
-      if (winningPlayer === 0) {
-        alert("Cats game!");
-      } else if (winningPlayer === 1) {
-        alert("X has won");
-      } else if (winningPlayer === 2) {
-        alert("O has won");
-      }
-      if (winningPlayer !== -1) {
-        resetBoard();
-      }
-    }, 0);
+    const boxId = event.target.id[event.target.id.length - 1];
+    const msg = {
+      type: "game",
+      boxId,
+      turn,
+      event,
+    };
+    ws.send(JSON.stringify(msg));
   }
+}
+
+function onClickOnBoard(client_name, boxId, curr_turn) {
+  const targetEle = document.getElementById(`grid-cell-${boxId}`)
+  const elem = document.createElement("span");
+  if (curr_turn) {
+    elem.innerText = "X";
+    elem.style.color = "blue";
+  } else {
+    elem.innerText = "O";
+    elem.style.color = "red";
+  }
+  arr[boxId] = elem.innerText;
+  targetEle.appendChild(elem);
+  turn = !curr_turn;
+
+  // this is done so that it runs after child element is appended
+  setTimeout(() => {
+    const winningPlayer = hasWon();
+    if (winningPlayer === 0) {
+      alert("Cats game!");
+    } else if (winningPlayer === 1) {
+      alert("X has won");
+    } else if (winningPlayer === 2) {
+      alert("O has won");
+    }
+    if (winningPlayer !== -1) {
+      resetBoard();
+    }
+  }, 0);
 }
 
 // reset the board. page is not reloaded
@@ -83,8 +98,6 @@ function hasWon() {
 }
 
 // Chat Window Code
-const clientID = Date.now();
-const ws = new WebSocket(`ws://localhost:8000/ws/${clientID}`);
 const inputEle = document.getElementsByClassName(`chat-room__cell`)[0];
 inputEle.addEventListener(`keypress`, sendMessage);
 
@@ -99,14 +112,23 @@ function sendMessage(event) {
   if (event.keyCode === 13) {
     const inputMessage = inputEle.value;
     inputEle.value = ``;
-    ws.send(inputMessage);
+    const msg = {
+      type: "chat",
+      message: inputMessage,
+    };
+    ws.send(JSON.stringify(msg));
   }
 }
 
 ws.onmessage = processMessage;
 
 function processMessage(response) {
-  [client_name, message] = response.data.split(`:`);
-  attachChatElement(client_name, message);
+  const data = JSON.parse(response.data);
+  if (data.type === "chat") {
+    const { client_name, message } = data;
+    attachChatElement(client_name, message);
+  } else if (data.type === "game") {
+    const { boxId, client_name, turn } = data;
+    onClickOnBoard(client_name, boxId, turn);
+  }
 }
-

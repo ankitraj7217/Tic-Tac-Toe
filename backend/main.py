@@ -1,6 +1,8 @@
 from fastapi import FastAPI, WebSocket
 from typing import List
 
+import json
+
 app = FastAPI()
 
 class ConnectionManager:
@@ -30,10 +32,14 @@ async def chat_room(websocket: WebSocket, client_id: int):
     while True:
         try:
             data = await websocket.receive_text()
-            await manager.broadcast(f"Client {client_id}: {data}")
+            data = json.loads(data)
+            data["client_name"] = client_id
+            await manager.broadcast(json.dumps(data))
         except Exception as e:
             manager.closeConnection(websocket)
             print("Error :", e)
             break
 
     print("Bye")
+
+chat_manager = ConnectionManager()
