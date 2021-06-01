@@ -1,0 +1,64 @@
+.container-grid {
+  border: 1px solid black;
+  display: -ms-inline-grid;
+  display: inline-grid;
+  -ms-grid-columns: 80px 80px 80px;
+      grid-template-columns: 80px 80px 80px;
+  -ms-grid-rows: 80px 80px 80px;
+      grid-template-rows: 80px 80px 80px;
+  background-color: #e6e4e4;
+  margin: 240px 400px;
+  position: fixed;
+  right: 15rem;
+}
+
+.container-grid__cell {
+  border: 1px solid black;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  cursor: pointer;
+}
+
+.container-grid__cell > span {
+  font-size: 40px;
+}
+
+.chat-room {
+  position: fixed;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  right: 1rem;
+  bottom: 2rem;
+  height: 90vh;
+  width: 15rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  border: 2px solid black;
+  border-radius: 0.5rem;
+}
+
+.chat-room__cell {
+  position: absolute;
+  margin-left: 0.1rem;
+  width: 14.4rem;
+  bottom: 1rem;
+  border: white;
+  border-bottom: 1px solid black;
+}
+
+.chat-room__chats-message {
+  word-wrap: break-word;
+}
+/*# sourceMappingURL=style.css.map */
