@@ -1,4 +1,5 @@
-body, html {
+body,
+html {
   height: 99.5%;
   background: url("./../assets/background-pic.jpg") no-repeat;
   background-size: cover;
@@ -170,5 +171,33 @@ body, html {
 #user-name-input {
   height: 2vh;
   width: 16vw;
+}
+
+#error-content {
+  position: fixed;
+  top: 40vh;
+  left: 40vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  font-size: 1.2rem;
+  display: none;
+}
+
+#error-content-button {
+  background-color: #0e0218;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
 }
 /*# sourceMappingURL=style.css.map */

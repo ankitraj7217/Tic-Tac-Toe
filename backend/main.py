@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
@@ -24,6 +24,8 @@ class ConnectionManager:
 
     async def connect(self, websocket: WebSocket, unique_id: str, user_name: str):
         await websocket.accept()
+        if self.twoConnectionsDone(unique_id):
+            raise HTTPException(status_code=400, detail="Cant add more than 2 connections")
         for x in self.connections:
             if x["id"] == unique_id:
                 x["websockets"].append(websocket)
@@ -70,6 +72,13 @@ class ConnectionManager:
             user_name = x[1]  
         return [unique_id, user_name]
 
+    def twoConnectionsDone(self, id: str):
+        for obj in self.connections:
+            if obj["id"] == id:
+                if len(obj["websockets"]) == 2:
+                    return True
+        return False            
+
 manager = ConnectionManager()
 
 @app.get("/")
@@ -85,22 +94,27 @@ def get_new_room_id():
 
 @app.websocket("/ws/{client_id}")
 async def chat_room(websocket: WebSocket, client_id: str):
-    [unique_id, user_name] = manager.splitId(client_id)
-    val = manager.verifyConnectionId(unique_id)
-    if val == False:
-        print("Bad Request")
-    await manager.connect(websocket, unique_id, user_name)
-    while True:
-        try:
+    try:
+        [unique_id, user_name] = manager.splitId(client_id)
+        val = manager.verifyConnectionId(unique_id)
+        await manager.connect(websocket, unique_id, user_name)
+        if val == False:
+            raise HTTPException(status_code=400, detail="This Id doesnt exist.")
+         
+        while True:
             data = await websocket.receive_text()
             data = json.loads(data)
             data["client_name"] = user_name
             await manager.broadcast(unique_id, json.dumps(data))
-        except Exception as e:
-            manager.closeConnection(unique_id, websocket)
-            await manager.broadcast(unique_id, json.dumps({"type": "chat", "client_name": user_name, "message": "left the room."}))
-            print("Error :", e)
-            break
+        
+    except HTTPException as httpException:
+        print("Error: ", httpException.detail) 
+        await websocket.send_text(json.dumps({"type": "error", "message": httpException.detail}))
+        manager.closeConnection(unique_id, websocket)   
+    except Exception as e:
+        manager.closeConnection(unique_id, websocket)
+        await manager.broadcast(unique_id, json.dumps({"type": "chat", "client_name": user_name, "message": "left the room."}))
+        print("Error :", e)
 
     print("Bye")
 
