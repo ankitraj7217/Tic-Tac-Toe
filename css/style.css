@@ -1,3 +1,9 @@
+body, html {
+  height: 100%;
+  background: url("./../assets/background-pic.jpg") no-repeat;
+  background-size: cover;
+}
+
 .game-container {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -5,23 +11,26 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  height: 100vh;
-  width: 80vw;
+  height: 20vw;
+  width: 20vw;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
   position: fixed;
-  right: 18rem;
+  top: 30vh;
+  right: 40vw;
 }
 
 .container-grid {
+  width: inherit;
+  height: inherit;
   border: 1px solid black;
   display: -ms-inline-grid;
   display: inline-grid;
-  -ms-grid-columns: 80px 80px 80px;
-      grid-template-columns: 80px 80px 80px;
-  -ms-grid-rows: 80px 80px 80px;
-      grid-template-rows: 80px 80px 80px;
+  -ms-grid-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
+  -ms-grid-rows: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr;
   background-color: #e6e4e4;
 }
 
@@ -50,7 +59,7 @@
   right: 1rem;
   bottom: 2rem;
   height: 90vh;
-  width: 18rem;
+  width: 25vw;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -60,14 +69,16 @@
           flex-direction: column;
   border: 2px solid black;
   border-radius: 0.5rem;
+  background: white;
 }
 
 .chat-room__cell {
   position: absolute;
   margin-left: 0.1rem;
-  width: 14.4rem;
+  width: 24vw;
   bottom: 1rem;
   border: white;
+  outline: none;
   border-bottom: 1px solid black;
 }
 
@@ -83,5 +94,53 @@
 
 .chat-room__chats-message {
   word-wrap: break-word;
+}
+
+#clock-container {
+  background: url("./../assets/empty_clock.PNG");
+  background-size: 100%;
+  width: 20vw;
+  height: 20vw;
+  border-radius: 50%;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+#clock-container .clock-container-hand {
+  position: relative;
+  background-color: black;
+  -webkit-transform-origin: bottom;
+          transform-origin: bottom;
+}
+
+#clock-container-hour {
+  bottom: 12.4%;
+  right: -0.8%;
+  width: 2%;
+  height: 24%;
+}
+
+#clock-container-minute {
+  bottom: 18.4%;
+  right: 1%;
+  width: 1.2%;
+  height: 35%;
+}
+
+#clock-container-second {
+  bottom: 23.4%;
+  right: 1.74%;
+  width: 0.74%;
+  height: 44%;
 }
 /*# sourceMappingURL=style.css.map */

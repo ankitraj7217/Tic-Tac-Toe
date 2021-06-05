@@ -1,18 +1,27 @@
+body, html {
+  height: 100%;
+  background: url("./../assets/background-pic.jpg") no-repeat;
+  background-size: cover;
+}
+
 .game-container {
   display: flex;
   justify-content: center;
-  height: 100vh;
-  width: 80vw;
+  height: 20vw;
+  width: 20vw;
   align-items: center;
   position: fixed;
-  right: 18rem;
+  top: 30vh;
+  right: 40vw;
 }
 
 .container-grid {
+  width: inherit;
+  height: inherit;
   border: 1px solid black;
   display: inline-grid;
-  grid-template-columns: 80px 80px 80px;
-  grid-template-rows: 80px 80px 80px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   background-color: rgb(230, 228, 228);
 
   &__cell {
@@ -34,18 +43,20 @@
   right: 1rem;
   bottom: 2rem;
   height: 90vh;
-  width: 18rem;
+  width: 25vw;
   display: flex;
   flex-direction: column;
   border: 2px solid black;
   border-radius: 0.5rem;
+  background: white;
 
   &__cell {
     position: absolute;
     margin-left: 0.1rem;
-    width: 14.4rem;
+    width: 24vw;
     bottom: 1rem;
     border: white;
+    outline: none;
     border-bottom: 1px solid black;
   }
 
@@ -57,9 +68,50 @@
       width: 0;
       height: 0;
     }
-    
+
     &-message {
       word-wrap: break-word;
     }
+  }
+}
+
+#clock-container {
+  background: url("./../assets/empty_clock.PNG");
+  background-size: 100%;
+  width: 20vw;
+  height: 20vw;
+  border-radius: 50%;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .clock-container-hand {
+    position: relative;
+    background-color: black;
+    transform-origin: bottom;
+  }
+
+  &-hour {
+    bottom: 12.4%;
+    right: -0.8%;
+    width: 2%;
+    height: 24%;
+  }
+
+  &-minute {
+    bottom: 18.4%;
+    right: 1%;
+    width: 1.2%;
+    height: 35%;
+  }
+
+  &-second {
+    bottom: 23.4%;
+    right: 1.74%;
+    width: 0.74%;
+    height: 44%;
   }
 }

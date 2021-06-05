@@ -1,6 +1,7 @@
 import { createWebSocket } from "./websocket.js";
 import { startChat } from "./chat.js";
 import { startGame } from "./game.js";
+import {placeHands} from "./clock.js";
 
 const logged_in_html = `<div class="game-container">
                           <div class="container-grid">
@@ -20,12 +21,12 @@ const logged_in_html = `<div class="game-container">
                             <div class="chat-room__chats-name"></div>
                             <div class="chat-room__chats-message"></div>
                           </div>
-                          <input
-                            type="text"
+                          <div
+                            contenteditable="true"
                             class="chat-room__cell"
-                            placeholder="Enter your message"
-                          />
-                          </div>`;
+                            placeholder="Enter your message">
+                          </div>
+                        </div>`;
 
 async function generateNewId() {
   const response = await fetch("http://localhost:8000/getNewRoom");
@@ -34,13 +35,14 @@ async function generateNewId() {
 }
 
 async function startNewRoom() {
+  placeHands()
   if (location.hash.slice(2).length === 0) {
     const room_id = await generateNewId();
     history.pushState(null, "", `/#/${room_id}`);
   }
 
   const body = document.getElementsByTagName("body")[0];
-  body.innerHTML = logged_in_html;
+  body.innerHTML += logged_in_html;
   await createWebSocket();
   startChat();
   startGame();

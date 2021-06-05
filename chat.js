@@ -4,8 +4,8 @@ export function startChat() {
   const inputEle = document.getElementsByClassName(`chat-room__cell`)[0];
   function sendMessage(event) {
     if (event.keyCode === 13) {
-      const inputMessage = inputEle.value;
-      inputEle.value = ``;
+      const inputMessage = inputEle.innerText;
+      inputEle.innerText = ``;
       const msg = {
         type: "chat",
         message: inputMessage,
