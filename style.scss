@@ -1,12 +1,19 @@
+.game-container {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  width: 80vw;
+  align-items: center;
+  position: fixed;
+  right: 18rem;
+}
+
 .container-grid {
   border: 1px solid black;
   display: inline-grid;
   grid-template-columns: 80px 80px 80px;
   grid-template-rows: 80px 80px 80px;
   background-color: rgb(230, 228, 228);
-  margin: 240px 400px;
-  position: fixed;
-  right: 15rem;
 
   &__cell {
     border: 1px solid black;
@@ -27,7 +34,7 @@
   right: 1rem;
   bottom: 2rem;
   height: 90vh;
-  width: 15rem;
+  width: 18rem;
   display: flex;
   flex-direction: column;
   border: 2px solid black;
@@ -39,10 +46,18 @@
     width: 14.4rem;
     bottom: 1rem;
     border: white;
-    border-bottom: 1px solid black; 
+    border-bottom: 1px solid black;
   }
 
   &__chats {
+    height: 84vh;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+    
     &-message {
       word-wrap: break-word;
     }

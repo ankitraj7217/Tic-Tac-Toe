@@ -1,134 +1,49 @@
-const clientID = Date.now();
-const ws = new WebSocket(`ws://localhost:8000/ws/${clientID}`);
+import { createWebSocket } from "./websocket.js";
+import { startChat } from "./chat.js";
+import { startGame } from "./game.js";
 
-const board = document.getElementsByClassName("container-grid")[0];
+const logged_in_html = `<div class="game-container">
+                          <div class="container-grid">
+                            <div class="container-grid__cell" id="grid-cell-0"></div>
+                            <div class="container-grid__cell" id="grid-cell-1"></div>
+                            <div class="container-grid__cell" id="grid-cell-2"></div>
+                            <div class="container-grid__cell" id="grid-cell-3"></div>
+                            <div class="container-grid__cell" id="grid-cell-4"></div>
+                            <div class="container-grid__cell" id="grid-cell-5"></div>
+                            <div class="container-grid__cell" id="grid-cell-6"></div>
+                            <div class="container-grid__cell" id="grid-cell-7"></div>
+                            <div class="container-grid__cell" id="grid-cell-8"></div>
+                          </div>
+                          </div>
+                          <div class="chat-room">
+                          <div class="chat-room__chats">
+                            <div class="chat-room__chats-name"></div>
+                            <div class="chat-room__chats-message"></div>
+                          </div>
+                          <input
+                            type="text"
+                            class="chat-room__cell"
+                            placeholder="Enter your message"
+                          />
+                          </div>`;
 
-board.addEventListener("click", sendBoxId);
-
-let arr = ["", "", "", "", "", "", "", "", ""];
-let turn = true;
-
-function sendBoxId(event) {
-  if (!event.target.hasChildNodes()) {
-    const boxId = event.target.id[event.target.id.length - 1];
-    const msg = {
-      type: "game",
-      boxId,
-      turn,
-      event,
-    };
-    ws.send(JSON.stringify(msg));
-  }
+async function generateNewId() {
+  const response = await fetch("http://localhost:8000/getNewRoom");
+  const unique_id = await response.json();
+  return unique_id;
 }
 
-function onClickOnBoard(client_name, boxId, curr_turn) {
-  const targetEle = document.getElementById(`grid-cell-${boxId}`)
-  const elem = document.createElement("span");
-  if (curr_turn) {
-    elem.innerText = "X";
-    elem.style.color = "blue";
-  } else {
-    elem.innerText = "O";
-    elem.style.color = "red";
-  }
-  arr[boxId] = elem.innerText;
-  targetEle.appendChild(elem);
-  turn = !curr_turn;
-
-  // this is done so that it runs after child element is appended
-  setTimeout(() => {
-    const winningPlayer = hasWon();
-    if (winningPlayer === 0) {
-      alert("Cats game!");
-    } else if (winningPlayer === 1) {
-      alert("X has won");
-    } else if (winningPlayer === 2) {
-      alert("O has won");
-    }
-    if (winningPlayer !== -1) {
-      resetBoard();
-    }
-  }, 0);
-}
-
-// reset the board. page is not reloaded
-function resetBoard() {
-  const cells = document.getElementsByClassName("container-grid__cell");
-  for (const cell of cells) {
-    cell.hasChildNodes() && cell.removeChild(cell.childNodes[0]);
-  }
-  arr = ["", "", "", "", "", "", "", "", ""];
-  turn = true;
-}
-
-function hasWon() {
-  const winningPositions = [
-    [0, 1, 2],
-    [0, 3, 6],
-    [0, 4, 8],
-    [1, 4, 7],
-    [2, 5, 8],
-    [2, 4, 6],
-    [3, 4, 5],
-    [6, 7, 8],
-  ];
-
-  for (let i = 0; i < winningPositions.length; i++) {
-    const tempArr = winningPositions[i]; // just an alias for ease
-    if (
-      arr[tempArr[0]] === "X" &&
-      arr[tempArr[1]] === "X" &&
-      arr[tempArr[2]] === "X"
-    )
-      return 1;
-    else if (
-      arr[tempArr[0]] === "O" &&
-      arr[tempArr[1]] === "O" &&
-      arr[tempArr[2]] === "O"
-    )
-      return 2;
+async function startNewRoom() {
+  if (location.hash.slice(2).length === 0) {
+    const room_id = await generateNewId();
+    history.pushState(null, "", `/#/${room_id}`);
   }
 
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === "") {
-      return -1;
-    }
-  }
-  return 0;
+  const body = document.getElementsByTagName("body")[0];
+  body.innerHTML = logged_in_html;
+  await createWebSocket();
+  startChat();
+  startGame();
 }
 
-// Chat Window Code
-const inputEle = document.getElementsByClassName(`chat-room__cell`)[0];
-inputEle.addEventListener(`keypress`, sendMessage);
-
-function attachChatElement(client_name, message) {
-  const ele = `<div class="chat-room__chats-name">${client_name}</div>
-                <div class="chat-room__chats-message">${message}</div>`;
-  const container = document.getElementsByClassName(`chat-room__chats`)[0];
-  container.innerHTML += ele;
-}
-
-function sendMessage(event) {
-  if (event.keyCode === 13) {
-    const inputMessage = inputEle.value;
-    inputEle.value = ``;
-    const msg = {
-      type: "chat",
-      message: inputMessage,
-    };
-    ws.send(JSON.stringify(msg));
-  }
-}
-
-ws.onmessage = processMessage;
-
-function processMessage(response) {
-  const data = JSON.parse(response.data);
-  if (data.type === "chat") {
-    const { client_name, message } = data;
-    attachChatElement(client_name, message);
-  } else if (data.type === "game") {
-    const { boxId, client_name, turn } = data;
-    onClickOnBoard(client_name, boxId, turn);
-  }
-}
+startNewRoom();
