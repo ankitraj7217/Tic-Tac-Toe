@@ -1,7 +1,7 @@
 import { createWebSocket } from "./websocket.js";
 import { startChat } from "./chat.js";
 import { startGame } from "./game.js";
-import {placeHands} from "./clock.js";
+import { placeClockHands } from "./clock.js";
 
 const logged_in_html = `<div class="game-container">
                           <div class="container-grid">
@@ -15,8 +15,8 @@ const logged_in_html = `<div class="game-container">
                             <div class="container-grid__cell" id="grid-cell-7"></div>
                             <div class="container-grid__cell" id="grid-cell-8"></div>
                           </div>
-                          </div>
-                          <div class="chat-room">
+                        </div>
+                        <div class="chat-room">
                           <div class="chat-room__chats">
                             <div class="chat-room__chats-name"></div>
                             <div class="chat-room__chats-message"></div>
@@ -35,17 +35,26 @@ async function generateNewId() {
 }
 
 async function startNewRoom() {
-  placeHands()
+  const main_content = document.getElementById("main-content");
+  main_content.style.display = `block`;
+  placeClockHands();
   if (location.hash.slice(2).length === 0) {
     const room_id = await generateNewId();
     history.pushState(null, "", `/#/${room_id}`);
   }
 
-  const body = document.getElementsByTagName("body")[0];
-  body.innerHTML += logged_in_html;
+  main_content.innerHTML += logged_in_html;
   await createWebSocket();
   startChat();
   startGame();
 }
 
-startNewRoom();
+const userNameEle = document.getElementById(`user-name-input`);
+userNameEle.addEventListener("keypress", function (event) {
+  if (event.key === "Enter" && userNameEle.value !== ``) {
+    window.user_name = userNameEle.value;
+    const userNameDiv = document.getElementById(`user-name`)
+    userNameDiv.style.display = `none`;
+    startNewRoom();
+  }
+});

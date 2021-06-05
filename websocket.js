@@ -4,7 +4,7 @@ import { onClickOnBoard } from "./game.js";
 export var ws;
 
 export async function createWebSocket(){
-  const clientID = Date.now();
+  const clientID = window.user_name;
   const complete_ws_ID = location.hash.slice(2) + "-" + clientID
   ws = new WebSocket(`ws://localhost:8000/ws/${complete_ws_ID}`);
   ws.onmessage = processMessage;

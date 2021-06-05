@@ -1,11 +1,11 @@
-export function placeHands() {
+export function placeClockHands() {
   const clock_html = `<div id="clock-container">
                             <div id="clock-container-hour" class="clock-container-hand"></div>
                             <div id="clock-container-minute" class="clock-container-hand"></div>
                             <div id="clock-container-second" class="clock-container-hand"></div>
                         </div>`;
-  const body = document.getElementsByTagName(`body`)[0];
-  body.innerHTML += clock_html;
+  const main_content = document.getElementById(`main-content`);
+  main_content.innerHTML += clock_html;
   setInterval(() => {
     const hourHand = document.getElementById(`clock-container-hour`);
     const minuteHand = document.getElementById(`clock-container-minute`);

@@ -98,7 +98,7 @@ async def chat_room(websocket: WebSocket, client_id: str):
             await manager.broadcast(unique_id, json.dumps(data))
         except Exception as e:
             manager.closeConnection(unique_id, websocket)
-            await manager.broadcast(unique_id, json.dumps({"type": "chat", "client_name": unique_id, "message": "left the room."}))
+            await manager.broadcast(unique_id, json.dumps({"type": "chat", "client_name": user_name, "message": "left the room."}))
             print("Error :", e)
             break
 
